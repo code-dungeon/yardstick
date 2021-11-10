@@ -1,0 +1,10 @@
+node_modules/
+yarn-error.log
+.nyc_output/
+package.lock
+.DS_Store
+coverage/
+reports/
+*.orig
+.idea
+.stryker-tmp

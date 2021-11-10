@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "declaration": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "pretty": true,
+    "preserveConstEnums": true,
+    "outDir": "dist",
+    "removeComments": false,
+    "rootDir": "./",
+    "sourceMap": true,
+    "target": "ES2017",
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "lib/**/*.ts",
+    "src/**/*.ts"
+  ]
+}
