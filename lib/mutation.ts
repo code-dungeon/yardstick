@@ -10,12 +10,12 @@ const MOCHA_CONFIG: string = path.resolve(__dirname, '../config/mocha.conf.yml')
 
 export class MutationCommand extends YardstickCommand {
   public constructor() {
-    super('mutation', 'Turns on Stryker debug output', 'Logs some debug output' );
+    super('mutation', 'Turns on Stryker debug output', 'Logs some debug output');
     this
       .option('-c, --config [value]', 'Stryker config file path.', STRYKER_CONFIG)
       .option('--unit-config [value]', 'Mocha config path.', MOCHA_CONFIG)
       .option('--mutate-files [files]', 'Glob of source files to mutate', MUTATE_GLOB)
-      .option('--test-files [files]', 'Glob of spec files for unit tests', FILE_GLOB )
+      .option('--test-files [files]', 'Glob of spec files for unit tests', FILE_GLOB)
       .option('--ignore-files [files]', 'Glob of filese not to include in mutation run')
       .option('--report [bool]', 'Flag indicating to generate a html coverage report', false)
       .option('--report-dir [path]', 'Directory to save the coverage report', REPORT_DIR)
@@ -27,12 +27,12 @@ export class MutationCommand extends YardstickCommand {
     const debugFlag: boolean = this.getOptionValue('debug');
     const verboseFlag: boolean = this.getOptionValue('verbose');
     let logLevel: string = 'warn';
-    if( debugFlag && verboseFlag ){
+    if (debugFlag && verboseFlag){
       logLevel = 'trace';
-    }else if ( debugFlag){
+    }else if (debugFlag){
       // This can be used to turn on breakpoints
       logLevel = 'debug';
-    }else if ( verboseFlag ) {
+    }else if (verboseFlag) {
       logLevel = 'info';
     }
 
@@ -42,7 +42,7 @@ export class MutationCommand extends YardstickCommand {
   private getIgnoreFiles(): Array<string> {
     const filesToIgnore: string = this.getOptionValue('ignoreFiles');
 
-    if( filesToIgnore !== undefined ){
+    if (filesToIgnore !== undefined){
       return ['--ignorePatterns', filesToIgnore];
     }
 
@@ -57,8 +57,8 @@ export class MutationCommand extends YardstickCommand {
   private getReportConfig(): Array<string> {
     const reports: Array<string> = ['clear-text', 'progress'];
 
-    if( this.getOptionValue('report') ){
-      reports.push('html')
+    if (this.getOptionValue('report')){
+      reports.push('html');
     }
 
     return ['--reporters', reports.join(',')];

@@ -15,7 +15,7 @@
     "removeComments": false,
     "rootDir": "./",
     "sourceMap": true,
-    "target": "ES2017",
+    "target": "ES2021",
   },
   "exclude": [
     "node_modules"

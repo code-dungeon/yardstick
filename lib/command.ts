@@ -1,4 +1,4 @@
-import {Command} from 'commander';
+import { Command } from 'commander';
 import * as shell from 'shelljs';
 
 const _console: Console = console;
@@ -16,20 +16,20 @@ export abstract class YardstickCommand extends Command {
   }
 
   protected log(...args: Array<string>): void {
-    if( this.getOptionValue('debug') ) {
+    if (this.getOptionValue('debug')) {
       logger(...args);
     }
   }
 
   protected run(args: Array<string>): void {
-    const command = this.getCommand(args);
+    const command:string = this.getCommand(args);
     logger(`running ${this.name()}:`, command);
     
     const code:number = shell.exec(command).code;
     
     this.cleanup();
     shell.exit(code);
-  };
+  }
 
   protected cleanup(): void {}
 }

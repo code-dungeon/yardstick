@@ -11,7 +11,7 @@ export class BddCommand extends YardstickCommand {
     super('bdd', 'Enabled breakpoints to unit tests', 'Logs some debug output');
     this
       .option('-f, --files [files]', 'List of extra files to include')
-      .option('--steps [files]', 'Glob of step files', STEPDEF_GLOB )
+      .option('--steps [files]', 'Glob of step files', STEPDEF_GLOB)
       .option('--features [files]', 'Glob of feature files', FEATURE_GLOB)
 
       .option('-w, --watch', 'Will run tests, watching for any source or test file changes')
@@ -23,14 +23,14 @@ export class BddCommand extends YardstickCommand {
     const filesConfig: string = this.getOptionValue('files');
     const options: Array<string> = new Array();
   
-    if( filesConfig === undefined ){
+    if (filesConfig === undefined){
       return options;
     }
   
     const files: Array<string> = filesConfig.split(',');
     const {length} = files;
   
-    for( let i: number = 0; i < length; ++i){
+    for (let i: number = 0; i < length; ++i){
       const file:string = files[i];
   
       options.push('--require', file);

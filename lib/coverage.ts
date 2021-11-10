@@ -1,4 +1,4 @@
-import {UnitCommand} from './unit';
+import { UnitCommand } from './unit';
 import * as which from 'which';
 import * as shell from 'shelljs';
 
@@ -16,7 +16,7 @@ export class CoverageCommand extends UnitCommand {
       .option('--branches [number]', 'Percentage of branches that must have coder coverage', '80')
       .option('--report [bool]', 'Flag indicating to generate a html coverage report', false)
       .option('--report-dir [path]', 'Directory to save the coverage report', REPORT_DIR)
-      .description('Runs code coverage for unit tets')
+      .description('Runs code coverage for unit tets');
   }
 
   private getSourceFiles(): Array<string> {
@@ -25,7 +25,7 @@ export class CoverageCommand extends UnitCommand {
 
   private getReportConfig(): Array<string> {
     const options: Array<string> = ['--reporter-lcov', '--reporter=text-summary'];
-    if( this.getOptionValue('report') !== false ){
+    if (this.getOptionValue('report') !== false){
       options.push('--report-dir', this.getOptionValue('reportDir'), '--reporter=html');
     }
 
@@ -33,7 +33,7 @@ export class CoverageCommand extends UnitCommand {
   }
 
   private getCheckCoverage(): Array<string> {
-    if( this.getOptionValue('checkCoverage') === false ){
+    if (this.getOptionValue('checkCoverage') === false){
       return [];
     }
 
