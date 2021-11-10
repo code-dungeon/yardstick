@@ -1,1 +1,5 @@
-./node_modules/@code-dungeon/typescript-lint/tslint.json
+{
+  "extends": "./node_modules/@code-dungeon/typescript-lint/tslint.json",
+  "rules": {
+  }
+}
