@@ -17,9 +17,9 @@ if [[ ! -L "./dist" ]] ; then
   ln -s ../../../dist .
 fi
 
-if [[ ! -L "./dist/config" ]] ; then
-  ln -s ../config ./dist/config
-fi
+# if [[ ! -f "./dist/config" ]] ; then
+#   ln -s ../config ./dist/config
+# fi
 
 cd -
 

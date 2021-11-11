@@ -1,13 +1,13 @@
 {
   "name": "@code-dungeon/yardstick",
-  "version": "1.0.0",
+  "version": "0.0.3",
   "description": "Drop in test setup",
-  "main": "./lib/yardstick",
+  "main": "./dist/lib/yardstick",
   "bin": {
     "yardstick": "./dist/lib/yardstick.js"
   },
   "dependencies": {
-    "@code-dungeon/mocha-given": "git+https://github.com/code-dungeon/mocha-given.git#init",
+    "@code-dungeon/mocha-given": "^0.0.1",
     "@cucumber/cucumber": "^8.0.0-rc.1",
     "@stryker-mutator/api": "^5.4.1",
     "@stryker-mutator/core": "^5.4.1",
@@ -28,8 +28,8 @@
     "which": "^2.0.2"
   },
   "devDependencies": {
-    "@code-dungeon/commit-format": "git+https://github.com/code-dungeon/commit-format.git#init",
-    "@code-dungeon/typescript-lint": "git+https://github.com/code-dungeon/typescript-lint.git#init",
+    "@code-dungeon/commit-format": "^0.0.2",
+    "@code-dungeon/typescript-lint": "^0.0.1",
     "@types/commander": "^2.12.2",
     "@types/node": "^16.11.7",
     "@types/shelljs": "^0.8.9",
@@ -41,8 +41,8 @@
   },
   "peerDependencies": {},
   "files": [
-    "dist/",
-    "config/"
+    "dist/config/**/*",
+    "dist/lib/**/*.js"
   ],
   "scripts": {
     "build": "./scripts/build.sh",
