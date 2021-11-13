@@ -1,6 +1,7 @@
 import { YardstickCommand } from './command';
 import * as path from 'path';
 import * as which from 'which';
+import * as glob from 'glob';
 
 const FILE_GLOB: string = 'test/unit/**/*.{coffee,js,ts}';
 const MOCHA_CONFIG: string = path.resolve(__dirname, '../config/mocha.conf.yml');
@@ -45,12 +46,14 @@ export class UnitCommand extends YardstickCommand {
 
   private getOptions(): string {
     const options: Array<string> = new Array();
-    
+
     options.push(...this.getMochaConfig());
     options.push(...this.getWatchConfig());
     options.push(...this.getDebugConfig());
-    options.push(this.getOptionValue('testFiles'));
-    
+
+    const files: string = glob.sync(this.getOptionValue('testFiles')).join(' ');
+    options.push(files);
+
     return options.join(' ');
   }
 

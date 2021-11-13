@@ -1,8 +1,9 @@
 import { UnitCommand } from './unit';
 import * as which from 'which';
 import * as shell from 'shelljs';
+import * as glob from 'glob';
 
-const SOURCE_GLOB: string = 'src/**/*.ts';
+const SOURCE_GLOB: string = 'src/**/*.{coffee,js,ts}';
 const REPORT_DIR: string = './reports/unit-coverage';
 
 export class CoverageCommand extends UnitCommand {
@@ -20,12 +21,12 @@ export class CoverageCommand extends UnitCommand {
   }
 
   private getSourceFiles(): Array<string> {
-    return ['--include', this.getOptionValue('sourceFiles')];
+    return glob.sync(this.getOptionValue('sourceFiles')).map(file => `--include ${file}`);
   }
 
   private getReportConfig(): Array<string> {
     const options: Array<string> = ['--reporter-lcov', '--reporter=text-summary'];
-    if (this.getOptionValue('report') !== false){
+    if (this.getOptionValue('report') !== false) {
       options.push('--report-dir', this.getOptionValue('reportDir'), '--reporter=html');
     }
 
@@ -33,7 +34,7 @@ export class CoverageCommand extends UnitCommand {
   }
 
   private getCheckCoverage(): Array<string> {
-    if (this.getOptionValue('checkCoverage') === false){
+    if (this.getOptionValue('checkCoverage') === false) {
       return [];
     }
 
@@ -60,8 +61,8 @@ export class CoverageCommand extends UnitCommand {
   protected getCommand(args: Array<string>): string {
     const command: string = which.sync('nyc');
     const options: string = this.getCoverageOptions();
-    
-    return [ command, options, super.getCommand(args)].join(' ');
+
+    return [command, options, super.getCommand(args)].join(' ');
   }
 
   protected cleanup(): void {

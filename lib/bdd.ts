@@ -2,6 +2,7 @@ import { YardstickCommand } from './command';
 
 import * as path from 'path';
 import * as which from 'which';
+import * as glob from 'glob';
 
 const STEPDEF_GLOB: string = 'test/bdd/**/*.{coffee,js,ts}';
 const FEATURE_GLOB: string = 'test/bdd/**/*.feature';
@@ -22,17 +23,17 @@ export class BddCommand extends YardstickCommand {
   private getExtraFileIncludes(): Array<string> {
     const filesConfig: string = this.getOptionValue('files');
     const options: Array<string> = new Array();
-  
-    if (filesConfig === undefined){
+
+    if (filesConfig === undefined) {
       return options;
     }
-  
+
     const files: Array<string> = filesConfig.split(',');
-    const {length} = files;
-  
-    for (let i: number = 0; i < length; ++i){
-      const file:string = files[i];
-  
+    const { length } = files;
+
+    for (let i: number = 0; i < length; ++i) {
+      const file: string = files[i];
+
       options.push('--require', file);
     }
 
@@ -40,17 +41,20 @@ export class BddCommand extends YardstickCommand {
   }
 
   private getCucumberOptions(): Array<string> {
-    return [
+    const files: Array<string> = glob.sync(this.getOptionValue('steps')).map(file => `--require ${file}`);
+
+    const options: Array<string> = [
       '--require',
       path.join(__dirname, '../../config/globals.js'),
-      '--require',
-      this.getOptionValue('steps')
+      files.join(' ')
     ];
+
+    return options;
   }
 
   private getOptions(): string {
     const options: Array<string> = new Array();
-    
+
     options.push(...this.getExtraFileIncludes());
     options.push(...this.getCucumberOptions());
 
@@ -60,7 +64,7 @@ export class BddCommand extends YardstickCommand {
   protected getCommand(args: Array<string>): string {
     const command: string = which.sync('cucumber-js');
     const options: string = this.getOptions();
-    const features: string = this.getOptionValue('features');
+    const features: string = glob.sync(this.getOptionValue('features')).join(' ');
 
     return [
       command,

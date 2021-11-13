@@ -1,6 +1,7 @@
 import { YardstickCommand } from './command';
 import * as path from 'path';
 import * as which from 'which';
+import * as glob from 'glob';
 
 const MUTATE_GLOB: string = 'src/**/*.ts';
 const FILE_GLOB: string = 'test/unit/**/*.{coffee,js,ts}';
@@ -27,12 +28,12 @@ export class MutationCommand extends YardstickCommand {
     const debugFlag: boolean = this.getOptionValue('debug');
     const verboseFlag: boolean = this.getOptionValue('verbose');
     let logLevel: string = 'warn';
-    if (debugFlag && verboseFlag){
+    if (debugFlag && verboseFlag) {
       logLevel = 'trace';
-    }else if (debugFlag){
+    } else if (debugFlag) {
       // This can be used to turn on breakpoints
       logLevel = 'debug';
-    }else if (verboseFlag) {
+    } else if (verboseFlag) {
       logLevel = 'info';
     }
 
@@ -42,7 +43,7 @@ export class MutationCommand extends YardstickCommand {
   private getIgnoreFiles(): Array<string> {
     const filesToIgnore: string = this.getOptionValue('ignoreFiles');
 
-    if (filesToIgnore !== undefined){
+    if (filesToIgnore !== undefined) {
       return ['--ignorePatterns', filesToIgnore];
     }
 
@@ -50,14 +51,14 @@ export class MutationCommand extends YardstickCommand {
   }
 
   private getMutateFiles(): Array<string> {
-    const filesToMutate: string = this.getOptionValue('mutateFiles');
-    return ['--mutate', filesToMutate];
+    const files: Array<string> = glob.sync(this.getOptionValue('mutateFiles'));
+    return ['--mutate', files.join(' ')];
   }
 
   private getReportConfig(): Array<string> {
     const reports: Array<string> = ['clear-text', 'progress'];
 
-    if (this.getOptionValue('report')){
+    if (this.getOptionValue('report')) {
       reports.push('html');
     }
 
@@ -66,7 +67,7 @@ export class MutationCommand extends YardstickCommand {
 
   private getOptions(): string {
     const options: Array<string> = new Array();
-    
+
     options.push(this.getOptionValue('config'));
     options.push(...this.getMutateFiles());
     options.push(...this.getIgnoreFiles());
@@ -79,15 +80,15 @@ export class MutationCommand extends YardstickCommand {
   protected getCommand(args: Array<string>): string {
     const command: string = which.sync('stryker');
     const options: string = this.getOptions();
-    const testFilesToRun: string = this.getOptionValue('testFiles');
     const mochaConfig: string = this.getOptionValue('unitConfig');
     const htmlReportPath: string = this.getOptionValue('reportDir');
+    const files: string = glob.sync(this.getOptionValue('testFiles')).join(',');
 
     return [
-      `export MOCHA_TEST_FILES="${testFilesToRun}"`,
+      `export MOCHA_TEST_FILES="${files}"`,
       `export MOCHA_CONFIG_PATH="${mochaConfig}"`,
       `export HTML_REPORT_PATH="${htmlReportPath}"`,
-      [command, 'run', options, ...args].join(' ') 
+      [command, 'run', options, ...args].join(' ')
     ].join(';');
   }
 }

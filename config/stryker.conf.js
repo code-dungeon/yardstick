@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
   testRunner: 'mocha',
   coverageAnalysis: 'perTest',
-  mutator: {excludedMutations: ['BooleanSubstitution', 'StringLiteral']},
+  mutator: { excludedMutations: ['BooleanSubstitution', 'StringLiteral'] },
   packageManager: 'yarn',
   clearTextReporter: {
     allowColor: true,
@@ -14,7 +14,7 @@ module.exports = {
   },
   tsconfigFile: 'tsconfig.json',
   mochaOptions: {
-    spec: [process.env.MOCHA_TEST_FILES],
+    spec: process.env.MOCHA_TEST_FILES.split(','),
     config: process.env.MOCHA_CONFIG_PATH,
     require: [
       'coffeescript/register',

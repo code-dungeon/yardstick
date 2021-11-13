@@ -1,6 +1,6 @@
 {
   "name": "@code-dungeon/yardstick",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Drop in test setup",
   "main": "./dist/lib/yardstick",
   "bin": {
@@ -17,6 +17,7 @@
     "chai-properties": "^1.4.0",
     "coffeescript": "^2.6.1",
     "commander": "^8.3.0",
+    "glob": "^7.2.0",
     "mocha": "^9.1.3",
     "nyc": "^15.1.0",
     "reflect-metadata": "^0.1.13",
