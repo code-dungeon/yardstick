@@ -2,6 +2,7 @@ import { UnitCommand } from './unit';
 import * as which from 'which';
 import * as shell from 'shelljs';
 import * as glob from 'glob';
+import { isModuleInstalled, getCompilerRequire } from './util';
 
 const SOURCE_GLOB: string = 'src/**/*.{coffee,js,ts}';
 const REPORT_DIR: string = './reports/unit-coverage';
@@ -19,6 +20,7 @@ export class CoverageCommand extends UnitCommand {
       .option('--report-dir [path]', 'Directory to save the coverage report', REPORT_DIR)
       .description('Runs code coverage for unit tets');
   }
+
 
   private getSourceFiles(): Array<string> {
     return glob.sync(this.getOptionValue('sourceFiles')).map(file => `--include ${file}`);
@@ -51,6 +53,10 @@ export class CoverageCommand extends UnitCommand {
 
     options.push(...this.getSourceFiles());
     options.push(...this.getReportConfig());
+    options.push(...getCompilerRequire('ts-node'));
+    options.push(...getCompilerRequire('coffeescript'));
+    options.push(...getCompilerRequire('source-map-support'));
+    options.push(...getCompilerRequire('@babel'));
     options.push('--all');
     options.push(...this.getCheckCoverage());
     options.push('--extension .ts', '--extension .js', '--extension .coffee');

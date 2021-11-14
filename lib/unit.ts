@@ -1,4 +1,5 @@
 import { YardstickCommand } from './command';
+import { getCompilerRequire } from './util';
 import * as path from 'path';
 import * as which from 'which';
 import * as glob from 'glob';
@@ -50,6 +51,10 @@ export class UnitCommand extends YardstickCommand {
     options.push(...this.getMochaConfig());
     options.push(...this.getWatchConfig());
     options.push(...this.getDebugConfig());
+    options.push(...getCompilerRequire('ts-node'));
+    options.push(...getCompilerRequire('coffeescript'));
+    options.push(...getCompilerRequire('source-map-support'));
+    options.push(...getCompilerRequire('@babel'));
 
     const files: string = glob.sync(this.getOptionValue('testFiles')).join(' ');
     options.push(files);

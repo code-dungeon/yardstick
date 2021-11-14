@@ -2,6 +2,7 @@
 
 describe 'Test', ->
   Given -> @instance = new Test()
+  Then -> @instance.should.not.be.undefined
   
   describe '#get', ->  
     When -> @value = @instance.get()
