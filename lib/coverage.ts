@@ -2,7 +2,7 @@ import { UnitCommand } from './unit';
 import * as which from 'which';
 import * as shell from 'shelljs';
 import * as glob from 'glob';
-import { isModuleInstalled, getCompilerRequire } from './util';
+import { util } from './util';
 
 const SOURCE_GLOB: string = 'src/**/*.{coffee,js,ts}';
 const REPORT_DIR: string = './reports/unit-coverage';
@@ -53,10 +53,10 @@ export class CoverageCommand extends UnitCommand {
 
     options.push(...this.getSourceFiles());
     options.push(...this.getReportConfig());
-    options.push(...getCompilerRequire('ts-node'));
-    options.push(...getCompilerRequire('coffeescript'));
-    options.push(...getCompilerRequire('source-map-support'));
-    options.push(...getCompilerRequire('@babel'));
+    options.push(...util.getCompilerRequire('ts-node'));
+    options.push(...util.getCompilerRequire('coffeescript'));
+    options.push(...util.getCompilerRequire('source-map-support'));
+    options.push(...util.getCompilerRequire('@babel'));
     options.push('--all');
     options.push(...this.getCheckCoverage());
     options.push('--extension .ts', '--extension .js', '--extension .coffee');
@@ -64,11 +64,22 @@ export class CoverageCommand extends UnitCommand {
     return options.join(' ');
   }
 
+  private getCompilerOptions(): string {
+    const options: Array<string> = new Array();
+
+    options.push(...util.getBabelCompilerOption());
+    options.push(...util.getCoffeescriptCompilerOption());
+    options.push(...util.getTypescriptCompilerOption());
+
+    return options.join('');
+  }
+
   protected getCommand(args: Array<string>): string {
     const command: string = which.sync('nyc');
     const options: string = this.getCoverageOptions();
+    const compilerOptions: string = this.getCompilerOptions();
 
-    return [command, options, super.getCommand(args)].join(' ');
+    return [compilerOptions, command, options, super.getCommand(args)].join(' ');
   }
 
   protected cleanup(): void {
