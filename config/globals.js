@@ -8,7 +8,7 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 
 global.importModule = function (srcPath) {
-  const modulePath = path.join(process.cwd(), 'src', srcPath);
+  const modulePath = path.join(process.cwd(), srcPath);
   return require(modulePath);
 };
 
