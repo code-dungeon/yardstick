@@ -22,6 +22,8 @@ export namespace util {
     if (isModuleInstalled('ts-node')) {
       return [`export TS_NODE_COMPILER_OPTIONS='{"removeComments":false}';`];
     }
+
+    return [];
   }
 
   export function getCoffeescriptCompilerOption(): Array<string> {
