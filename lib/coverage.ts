@@ -101,8 +101,6 @@ export class CoverageCommand extends UnitCommand {
     const options: string = this.getCoverageOptions();
     const compilerOptions: string = this.getCompilerOptions();
 
-    console.log('args:', args);
-
     return [compilerOptions, command, options, super.getCommand(args)].join(' ');
   }
 
