@@ -2,7 +2,6 @@ import { YardstickCommand } from './command';
 import { util } from './util';
 import * as path from 'path';
 import * as which from 'which';
-import * as glob from 'glob';
 
 const FILE_GLOB: string = 'test/unit/**/*.{coffee,js,ts}';
 const MOCHA_CONFIG: string = path.resolve(__dirname, '../config/mocha.conf.yml');
@@ -12,7 +11,7 @@ export class UnitCommand extends YardstickCommand {
     super(name, 'Enabled breakpoints to unit tests', 'Logs some debug output');
     this
       .option('-c, --config [value]', 'Config file path for running unit tests in mocha', MOCHA_CONFIG)
-      .option('--test-files [files]', 'Glob of spec files for unit tests', FILE_GLOB)
+      .option('--test-files [files...]', 'Glob of spec files for unit tests', FILE_GLOB)
       .option('-w, --watch', 'Will run tests, watching for any source or test file changes')
       .argument('[args ...]', 'Mocha specific arguments')
       .description('Runs unit tests in the Mocha framework');
@@ -56,7 +55,7 @@ export class UnitCommand extends YardstickCommand {
     options.push(...util.getCompilerRequire('source-map-support'));
     options.push(...util.getCompilerRequire('@babel'));
 
-    const files: string = glob.sync(this.getOptionValue('testFiles')).join(' ');
+    const files: string = util.getFilesWithPattern(this.getOptionValue('testFiles')).join(' ');
     options.push(files);
 
     return options.join(' ');

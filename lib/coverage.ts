@@ -1,33 +1,51 @@
-import { UnitCommand } from './unit';
 import * as which from 'which';
 import * as shell from 'shelljs';
-import * as glob from 'glob';
+import { UnitCommand } from './unit';
 import { util } from './util';
 
 const SOURCE_GLOB: string = 'src/**/*.{coffee,js,ts}';
 const REPORT_DIR: string = './reports/unit-coverage';
-
 export class CoverageCommand extends UnitCommand {
   public constructor() {
     super('coverage');
     this
-      .option('--source-files [files]', 'Glob of source file to run a coverage report for', SOURCE_GLOB)
+      .option('--source-files [files...]', 'Glob(s) of source files to run a coverage report for', SOURCE_GLOB)
+      .option('--exclude-source-files [files...]', 'Glob(s) of source files to exclude from coverage report')
+      .option('--all [bool]', 'Boolean indicating to include test coverage for files not required via test', true)
       .option('--check-coverage [bool]', 'Verifies coverage is within thresholds', false)
       .option('--lines [number]', 'Percentage of lines that must have coder coverage', '80')
       .option('--functions [number]', 'Percentage of functions that must have coder coverage', '80')
       .option('--branches [number]', 'Percentage of branches that must have coder coverage', '80')
       .option('--report [bool]', 'Flag indicating to generate a html coverage report', false)
+      .option('--reporter [reporters...]', 'List of reporters for viewing code coverage', 'text-summary')
       .option('--report-dir [path]', 'Directory to save the coverage report', REPORT_DIR)
       .description('Runs code coverage for unit tets');
   }
 
 
   private getSourceFiles(): Array<string> {
-    return glob.sync(this.getOptionValue('sourceFiles')).map(file => `--include ${file}`);
+    return util.getFilesWithPattern(this.getOptionValue('sourceFiles')).map(file => `--include ${file}`);
+  }
+
+  private getExcludedSourceFiles(): Array<string> {
+    return util.getFilesWithPattern(this.getOptionValue('excludeSourceFiles')).map(file => `--exclude ${file}`);
   }
 
   private getReportConfig(): Array<string> {
-    const options: Array<string> = ['--reporter-lcov', '--reporter=text-summary'];
+    const options: Array<string> = ['--reporter-lcov'];
+    const reporterOption: Array<string> | string = this.getOptionValue('reporter');
+    let reporters: Array<string>;
+
+    if( util.isArrayOption<string>(reporterOption)) {
+      reporters = reporterOption;
+    }else{
+      reporters = [reporterOption];
+    }
+
+    reporters.forEach( (reporter:string) => {
+      options.push(`--reporter=${reporter}`);
+    });
+
     if (this.getOptionValue('report') !== false) {
       options.push('--report-dir', this.getOptionValue('reportDir'), '--reporter=html');
     }
@@ -52,14 +70,18 @@ export class CoverageCommand extends UnitCommand {
     const options: Array<string> = new Array();
 
     options.push(...this.getSourceFiles());
+    options.push(...this.getExcludedSourceFiles());
     options.push(...this.getReportConfig());
     options.push(...util.getCompilerRequire('ts-node'));
     options.push(...util.getCompilerRequire('coffeescript'));
     options.push(...util.getCompilerRequire('source-map-support'));
     options.push(...util.getCompilerRequire('@babel'));
-    options.push('--all');
     options.push(...this.getCheckCoverage());
     options.push('--extension .ts', '--extension .js', '--extension .coffee');
+
+    if( this.getOptionValue('all')){
+      options.push('--all');
+    }
 
     return options.join(' ');
   }

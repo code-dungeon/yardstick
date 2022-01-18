@@ -1,7 +1,7 @@
 import { YardstickCommand } from './command';
 import * as path from 'path';
 import * as which from 'which';
-import * as glob from 'glob';
+import { util } from './util';
 
 const MUTATE_GLOB: string = 'src/**/*.ts';
 const FILE_GLOB: string = 'test/unit/**/*.{coffee,js,ts}';
@@ -15,9 +15,9 @@ export class MutationCommand extends YardstickCommand {
     this
       .option('-c, --config [value]', 'Stryker config file path.', STRYKER_CONFIG)
       .option('--unit-config [value]', 'Mocha config path.', MOCHA_CONFIG)
-      .option('--mutate-files [files]', 'Glob of source files to mutate', MUTATE_GLOB)
-      .option('--test-files [files]', 'Glob of spec files for unit tests', FILE_GLOB)
-      .option('--ignore-files [files]', 'Glob of filese not to include in mutation run')
+      .option('--mutate-files [files...]', 'Glob(s) of source files to mutate', MUTATE_GLOB)
+      .option('--test-files [files...]', 'Glob(s) of spec files for unit tests', FILE_GLOB)
+      .option('--ignore-files [files...]', 'Globs of filese not to include in mutation run')
       .option('--report [bool]', 'Flag indicating to generate a html coverage report', false)
       .option('--report-dir [path]', 'Directory to save the coverage report', REPORT_DIR)
       .argument('[args ...]', 'Stryker specific arguments')
@@ -41,18 +41,25 @@ export class MutationCommand extends YardstickCommand {
   }
 
   private getIgnoreFiles(): Array<string> {
-    const filesToIgnore: string = this.getOptionValue('ignoreFiles');
+    const ignoreOption: Array<string> | string = this.getOptionValue('ignoreFiles');
+    let patternsToIgnore: Array<string>;
 
-    if (filesToIgnore !== undefined) {
-      return ['--ignorePatterns', filesToIgnore];
+    if( util.isArrayOption(ignoreOption)){
+      patternsToIgnore = ignoreOption;
+    }else{
+      patternsToIgnore = [ignoreOption];
+    }
+
+    if (patternsToIgnore.length > 0 ) {
+      return ['--ignorePatterns', `"${patternsToIgnore.join(',')}"`];
     }
 
     return [];
   }
 
   private getMutateFiles(): Array<string> {
-    const files: Array<string> = glob.sync(this.getOptionValue('mutateFiles'));
-    return ['--mutate', files.join(' ')];
+    const files: Array<string> = util.getFilesWithPattern(this.getOptionValue('mutateFiles'));
+    return ['--mutate', files.join(',')];
   }
 
   private getReportConfig(): Array<string> {
@@ -82,10 +89,10 @@ export class MutationCommand extends YardstickCommand {
     const options: string = this.getOptions();
     const mochaConfig: string = this.getOptionValue('unitConfig');
     const htmlReportPath: string = this.getOptionValue('reportDir');
-    const files: string = glob.sync(this.getOptionValue('testFiles')).join(',');
+    const files: Array<string> = util.getFilesWithPattern(this.getOptionValue('testFiles'));
 
     return [
-      `export MOCHA_TEST_FILES="${files}"`,
+      `export MOCHA_TEST_FILES="${files.join(',')}"`,
       `export MOCHA_CONFIG_PATH="${mochaConfig}"`,
       `export HTML_REPORT_PATH="${htmlReportPath}"`,
       [command, 'run', options, ...args].join(' ')

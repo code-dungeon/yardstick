@@ -1,5 +1,5 @@
 { Given, When, Then } = require('@cucumber/cucumber')
-{ Test } = importModule('test')
+{ Test } = importModule('src/test')
 
 Given /^I initialize test$/, -> @test = new Test()
 When /^I call get$/, -> @result = @test.get()

@@ -1,3 +1,4 @@
+import * as glob from 'glob';
 export namespace util {
   export function isModuleInstalled(module: string): boolean {
     try {
@@ -8,11 +9,35 @@ export namespace util {
     }
   }
 
-  export function getCompilerRequire(compiler: string): Array<string> {
+  export function isArrayOption<T>(option: Array<T> | T): option is Array<T> {
+    return Array.isArray(option);
+  }
+
+  export function getFilesWithPattern(option: Array<string> | string): Array<string> {
+    const files: Array<string> = [];
+    let filePatterns: Array<string>;
+
+    if( option === undefined ){
+      return files;
+    } else if( isArrayOption(option)){
+      filePatterns = option;
+    }else {
+      filePatterns = [option];
+    }
+
+    filePatterns.forEach( (pattern) => {
+      const filesFound: Array<string> = glob.sync(pattern);
+      files.push(...filesFound);
+    });
+
+    return files;
+  }
+
+  export function getCompilerRequire(compiler: string, commandArg: string = '--require'): Array<string> {
     const module: string = `${compiler}/register`;
 
     if (isModuleInstalled(module)) {
-      return ['--require', module];
+      return [commandArg, module];
     }
 
     return [];
