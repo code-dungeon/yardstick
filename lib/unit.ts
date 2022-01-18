@@ -12,6 +12,8 @@ export class UnitCommand extends YardstickCommand {
     this
       .option('-c, --config [value]', 'Config file path for running unit tests in mocha', MOCHA_CONFIG)
       .option('--test-files [files...]', 'Glob of spec files for unit tests', FILE_GLOB)
+      .option('--reporter [reporter]', 'Reporter to use, such as mocha-junit-reporter')
+      .option('--reporter-options [options]', 'Reporter options to defined how to the reporter functions')
       .option('-w, --watch', 'Will run tests, watching for any source or test file changes')
       .argument('[args ...]', 'Mocha specific arguments')
       .description('Runs unit tests in the Mocha framework');
@@ -24,7 +26,18 @@ export class UnitCommand extends YardstickCommand {
     if (config === MOCHA_CONFIG) {
       options.push('--require', path.join(__dirname, '../config/globals.js'));
     }
+
     options.push('--config', config);
+
+    const reporter: string = this.getOptionValue('reporter');
+    if( reporter !== undefined ){
+      options.push('--reporter', reporter);
+    }
+
+    const reporterOptions: string = this.getOptionValue('reporterOptions');
+    if( reporterOptions !== undefined ){
+      options.push('--reporter-options', reporterOptions);
+    }
 
     return options;
   }
