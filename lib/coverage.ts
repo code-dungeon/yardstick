@@ -31,7 +31,7 @@ export class CoverageCommand extends UnitCommand {
     return util.getFilesWithPattern(this.getOptionValue('excludeSourceFiles')).map(file => `--exclude ${file}`);
   }
 
-  private getReportConfig(): Array<string> {
+  private getReporterConfig(): Array<string> {
     const options: Array<string> = ['--reporter-lcov'];
     const reporterOption: Array<string> | string = this.getOptionValue('reporter');
     let reporters: Array<string>;
@@ -71,7 +71,7 @@ export class CoverageCommand extends UnitCommand {
 
     options.push(...this.getSourceFiles());
     options.push(...this.getExcludedSourceFiles());
-    options.push(...this.getReportConfig());
+    options.push(...this.getReporterConfig());
     options.push(...util.getCompilerRequire('ts-node'));
     options.push(...util.getCompilerRequire('coffeescript'));
     options.push(...util.getCompilerRequire('source-map-support'));
@@ -100,6 +100,8 @@ export class CoverageCommand extends UnitCommand {
     const command: string = which.sync('nyc');
     const options: string = this.getCoverageOptions();
     const compilerOptions: string = this.getCompilerOptions();
+
+    console.log('args:', args);
 
     return [compilerOptions, command, options, super.getCommand(args)].join(' ');
   }
