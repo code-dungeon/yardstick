@@ -26,6 +26,9 @@ export namespace util {
     }
 
     filePatterns.forEach( (pattern) => {
+      if( pattern === '' ){
+        return;
+      }
       const filesFound: Array<string> = glob.sync(pattern);
       files.push(...filesFound);
     });

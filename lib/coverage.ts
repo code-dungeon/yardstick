@@ -46,7 +46,7 @@ export class CoverageCommand extends UnitCommand {
       options.push(`--reporter=${reporter}`);
     });
 
-    if (this.getOptionValue('report') !== false) {
+    if (this.getOptionValue('report') !== 'false' ) {
       options.push('--report-dir', this.getOptionValue('reportDir'), '--reporter=html');
     }
 
@@ -79,7 +79,7 @@ export class CoverageCommand extends UnitCommand {
     options.push(...this.getCheckCoverage());
     options.push('--extension .ts', '--extension .js', '--extension .coffee');
 
-    if( this.getOptionValue('all')){
+    if( this.getOptionValue('all') !== 'false' ){
       options.push('--all');
     }
 
